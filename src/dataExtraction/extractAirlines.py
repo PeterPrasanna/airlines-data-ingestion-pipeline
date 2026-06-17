@@ -13,16 +13,17 @@ df_airlines = pd.DataFrame(raw["data"])
 df_airlines = df_airlines[df_airlines["status"] == "active"]
 
 df_airlines_clean = pd.DataFrame({
-    "iata_code": df_airlines["iata_code"],
-    "icao_code": df_airlines["icao_code"],
-    "name": df_airlines["airline_name"],
-    "country": df_airlines["country_name"],
-    "fleet_size": pd.to_numeric(df_airlines["fleet_size"], errors="coerce"),
-    "status": df_airlines["status"],
-    "type": df_airlines["type"]
+    "airline_id":    df_airlines["airline_id"],
+    "airline_name": df_airlines["airline_name"],
+    "iata_code":    df_airlines["iata_code"],
+    "country_iso2":    df_airlines["country_iso2"],
+    "country_name": df_airlines["country_name"],
+    "date_founded":   pd.to_numeric(df_airlines["date_founded"], errors="coerce"),
+    "fleet_size":   pd.to_numeric(df_airlines["fleet_size"], errors="coerce"),
+    "fleet_average_age":         df_airlines["fleet_average_age"],
+    "status":       df_airlines["status"]
 })
 
-df_airlines_clean = df_airlines_clean.dropna(subset=["iata_code", "icao_code", "country","type"])
 
 print(len(df_airlines_clean))
 #df_airlines_clean = df_airlines_clean.head(10)

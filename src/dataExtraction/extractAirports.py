@@ -13,11 +13,16 @@ df_airports = pd.DataFrame(raw["data"])
 
 
 df_airports_clean = pd.DataFrame({
-    "iata_code": df_airports["iata_code"],
-    "name": df_airports["airport_name"],
-    "country": df_airports["country_name"],
-    "latitude": pd.to_numeric(df_airports["latitude"], errors="coerce"),
-    "longitude": pd.to_numeric(df_airports["longitude"], errors="coerce")
+    "airport_id":    df_airports["airport_id"],
+    "airport_name":  df_airports["airport_name"],
+    "iata_code":     df_airports["iata_code"],
+    "city_iata_code": df_airports["city_iata_code"],
+    "country_iso2":  df_airports["country_iso2"],
+    "country_name":  df_airports["country_name"],
+    "gmt":           pd.to_numeric(df_airports["gmt"], errors="coerce"),
+    "timezone":      df_airports["timezone"],
+    "latitude":      pd.to_numeric(df_airports["latitude"], errors="coerce"),
+    "longitude":     pd.to_numeric(df_airports["longitude"], errors="coerce")
 })
 
 engine = create_engine(DATABASE_URL)
