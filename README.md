@@ -57,3 +57,12 @@ Ce script permet de :
 - charger airports.json
 - transformer les données
 - insérer les données dans la table `airports`
+
+### 3️⃣ Flights
+
+> 📄 src/dataExtraction/extractFlights.py
+
+Ce script permet de :
+- se connecter au fichier "flights_sample_3M.csv"
+- lire et transformer les données
+- insérer les données dans la table `flights`
