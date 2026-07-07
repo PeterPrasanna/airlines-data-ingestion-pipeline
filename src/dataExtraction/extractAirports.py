@@ -1,13 +1,15 @@
-import json
 import pandas as pd
-from src.utils.paths import RAW_DATA
+import requests
 from src.config import DATABASE_URL
 from sqlalchemy import create_engine
 
-file_path = RAW_DATA / "airports.json"
+FILE_ID = "1hL1_dc4RFOpLiux15pTEU0cGxEqwDIq7"
+url = f"https://drive.google.com/uc?export=download&id={FILE_ID}"
 
-with open(file_path, "r", encoding="utf-8") as f:
-    raw = json.load(f)
+response = requests.get(url)
+response.raise_for_status()
+
+raw = response.json()
 
 df_airports = pd.DataFrame(raw["data"])
 

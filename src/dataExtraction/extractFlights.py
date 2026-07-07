@@ -1,7 +1,11 @@
 import csv
-from config import get_db_connection
+from src.config import get_db_connection
+from pathlib import Path
 
-def load_flights(filepath="data/raw/flights_sample_3M.csv"):
+BASE_DIR = Path(__file__).resolve().parents[2]
+filePathFlightsCSV = BASE_DIR / "data" / "raw" / "flights_sample_3m.csv"
+
+def load_flights(filepath=filePathFlightsCSV):
     conn = get_db_connection()
     cur = conn.cursor()
 
