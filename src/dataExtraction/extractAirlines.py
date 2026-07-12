@@ -28,6 +28,12 @@ df_airlines_clean = pd.DataFrame({
 print(len(df_airlines_clean))
 #df_airlines_clean = df_airlines_clean.head(10)
 
+# Supprimer les iata_code dupliqués ou invalides (ex: "DO*")
+df_airlines_clean = df_airlines_clean[df_airlines_clean["iata_code"].str.match(r'^[A-Z0-9]{2,3}$', na=False)]
+df_airlines_clean = df_airlines_clean.drop_duplicates(subset=["iata_code"])
+
+print(f"Après nettoyage doublons : {len(df_airlines_clean)} airlines")
+
 engine = create_engine(DATABASE_URL)
 
 df_airlines_clean.to_sql(
