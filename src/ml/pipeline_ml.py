@@ -95,6 +95,21 @@ y_pred = model.predict(X_test)
 print(f"\nAccuracy : {accuracy_score(y_test, y_pred):.2f}")
 print(classification_report(y_test, y_pred, target_names=["À l'heure", "En retard"]))
 
+# ─────────────────────────────────────────────
+# SAUVEGARDE DU MODÈLE
+# ─────────────────────────────────────────────
+
+joblib.dump(model,      "data/models/delay_predictor.pkl")
+joblib.dump(le_carrier, "data/models/encoder_carrier.pkl")
+joblib.dump(le_origin,  "data/models/encoder_origin.pkl")
+joblib.dump(le_dest,    "data/models/encoder_dest.pkl")
+
+print("Modèle et encoders sauvegardés !")
+
+time_1 = time()
+
+print(f"\nLe pipeline a mis {time_1 - time_0:.2f} secondes à process")
+
 
 time_1 = time()
 
