@@ -27,6 +27,15 @@ df_airports_clean = pd.DataFrame({
     "longitude":     pd.to_numeric(df_airports["longitude"], errors="coerce")
 })
 
+# Tronquer country_iso2 à 2 caractères max et filtrer les iata_code invalides
+df_airports_clean["country_iso2"] = df_airports_clean["country_iso2"].str[:2]
+df_airports_clean = df_airports_clean[
+    df_airports_clean["iata_code"].str.match(r'^[A-Z0-9]{3}$', na=False)
+]
+df_airports_clean = df_airports_clean.drop_duplicates(subset=["iata_code"])
+
+print(f"Après nettoyage : {len(df_airports_clean)} airports")
+
 engine = create_engine(DATABASE_URL)
 
 df_airports_clean.to_sql(

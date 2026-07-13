@@ -36,7 +36,7 @@ print(f"Après nettoyage : {df.shape}")
 # SILVER → GOLD
 # ─────────────────────────────────────────────
 
-# Variable cible : 1 si le vol a plus de 15 min de retard, 0 sinon
+# Variable cible : 1 si le vol a plus de 10 min de retard, 0 sinon
 df["is_delayed"] = (df["ARR_DELAY"] > 10).astype(int)
 print(f"Vols en retard : {df['is_delayed'].mean() * 100:.1f}%")
 
@@ -94,6 +94,21 @@ y_pred = model.predict(X_test)
 
 print(f"\nAccuracy : {accuracy_score(y_test, y_pred):.2f}")
 print(classification_report(y_test, y_pred, target_names=["À l'heure", "En retard"]))
+
+# ─────────────────────────────────────────────
+# SAUVEGARDE DU MODÈLE
+# ─────────────────────────────────────────────
+
+joblib.dump(model,      "data/models/delay_predictor.pkl")
+joblib.dump(le_carrier, "data/models/encoder_carrier.pkl")
+joblib.dump(le_origin,  "data/models/encoder_origin.pkl")
+joblib.dump(le_dest,    "data/models/encoder_dest.pkl")
+
+print("Modèle et encoders sauvegardés !")
+
+time_1 = time()
+
+print(f"\nLe pipeline a mis {time_1 - time_0:.2f} secondes à process")
 
 
 time_1 = time()
