@@ -36,7 +36,7 @@ print(f"Après nettoyage : {df.shape}")
 # SILVER → GOLD
 # ─────────────────────────────────────────────
 
-# Variable cible : 1 si le vol a plus de 15 min de retard, 0 sinon
+# Variable cible : 1 si le vol a plus de 10 min de retard, 0 sinon
 df["is_delayed"] = (df["ARR_DELAY"] > 10).astype(int)
 print(f"Vols en retard : {df['is_delayed'].mean() * 100:.1f}%")
 
