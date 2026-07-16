@@ -5,6 +5,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report, accuracy_score
 import joblib
 from time import time
+import os
 
 # ─────────────────────────────────────────────
 # CHARGEMENT DES DONNÉES
@@ -32,6 +33,10 @@ df["CRS_ELAPSED_TIME"] = df["CRS_ELAPSED_TIME"].fillna(df["CRS_ELAPSED_TIME"].me
 
 print(f"Après nettoyage : {df.shape}")
 
+os.makedirs("data/silver", exist_ok=True)
+df.to_csv("data/silver/flights_silver.csv", index=False)
+print("Silver sauvegardé : data/silver/flights_silver.csv")
+
 # ─────────────────────────────────────────────
 # SILVER → GOLD
 # ─────────────────────────────────────────────
@@ -56,6 +61,10 @@ le_dest    = LabelEncoder()
 df["AIRLINE_CODE_ENC"] = le_carrier.fit_transform(df["AIRLINE_CODE"].astype(str))
 df["ORIGIN_ENC"]       = le_origin.fit_transform(df["ORIGIN"].astype(str))
 df["DEST_ENC"]         = le_dest.fit_transform(df["DEST"].astype(str))
+
+os.makedirs("data/gold", exist_ok=True)
+df.to_csv("data/gold/flights_gold.csv", index=False)
+print("Gold sauvegardé : data/gold/flights_gold.csv")
 
 # ─────────────────────────────────────────────
 # PRÉPARATION DES DONNÉES POUR LE ML
