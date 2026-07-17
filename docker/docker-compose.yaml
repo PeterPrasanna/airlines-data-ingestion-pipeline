@@ -1,20 +1,69 @@
 services:
+
   db:
     container_name: pg_airlines_container
     image: postgres:16-alpine
     restart: always
+
     environment:
       POSTGRES_USER: uAirlines
       POSTGRES_PASSWORD: pAirlines
       POSTGRES_DB: airline_db
+
     ports:
       - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uAirlines -d airline_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
   pgadmin:
     container_name: pgadmin4_airlines_container
     image: dpage/pgadmin4
     restart: always
+
     environment:
       PGADMIN_DEFAULT_EMAIL: airline@datascientest.com
       PGADMIN_DEFAULT_PASSWORD: data_engineer
+
     ports:
       - "5050:80"
+
+    depends_on:
+      - db
+
+
+  api:
+    container_name: airlines_api_container
+
+    build:
+      context: ..
+      dockerfile: Dockerfile
+
+    restart: always
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      API_TOKEN: ${API_TOKEN}
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+volumes:
+  postgres_data:
