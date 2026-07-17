@@ -192,33 +192,6 @@ def health():
 # ENDPOINT DE PRÉDICTION
 # ─────────────────────────────────────────────
 
-@app.get("/prediction/options")
-def get_prediction_options(
-    token: str = Depends(verify_token),
-):
-    carrier_encoder = ml_objects.get("carrier_encoder")
-    origin_encoder = ml_objects.get("origin_encoder")
-    dest_encoder = ml_objects.get("dest_encoder")
-
-    if any(
-        encoder is None
-        for encoder in [
-            carrier_encoder,
-            origin_encoder,
-            dest_encoder,
-        ]
-    ):
-        raise HTTPException(
-            status_code=503,
-            detail="Les encodeurs ne sont pas disponibles",
-        )
-
-    return {
-        "airlines": carrier_encoder.categories_[0].tolist(),
-        "origins": origin_encoder.categories_[0].tolist(),
-        "destinations": dest_encoder.categories_[0].tolist(),
-    }
-
 @app.post(
     "/predict",
     response_model=FlightPredictionOutput,
