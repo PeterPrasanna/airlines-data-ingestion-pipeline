@@ -192,6 +192,33 @@ def health():
 # ENDPOINT DE PRÉDICTION
 # ─────────────────────────────────────────────
 
+@app.get("/prediction/options")
+def get_prediction_options(
+    token: str = Depends(verify_token),
+):
+    carrier_encoder = ml_objects.get("carrier_encoder")
+    origin_encoder = ml_objects.get("origin_encoder")
+    dest_encoder = ml_objects.get("dest_encoder")
+
+    if any(
+        encoder is None
+        for encoder in [
+            carrier_encoder,
+            origin_encoder,
+            dest_encoder,
+        ]
+    ):
+        raise HTTPException(
+            status_code=503,
+            detail="Les encodeurs ne sont pas disponibles",
+        )
+
+    return {
+        "airlines": carrier_encoder.categories_[0].tolist(),
+        "origins": origin_encoder.categories_[0].tolist(),
+        "destinations": dest_encoder.categories_[0].tolist(),
+    }
+
 @app.post(
     "/predict",
     response_model=FlightPredictionOutput,
@@ -238,13 +265,21 @@ def predict_delay(
 
     try:
         airline_encoded = int(
-            carrier_encoder.transform([airline_code])[0]
+            carrier_encoder.transform(
+                [[airline_code]]
+            )[0][0]
         )
+
         origin_encoded = int(
-            origin_encoder.transform([origin])[0]
+            origin_encoder.transform(
+                [[origin]]
+            )[0][0]
         )
+
         destination_encoded = int(
-            dest_encoder.transform([destination])[0]
+            dest_encoder.transform(
+                [[destination]]
+            )[0][0]
         )
 
     except ValueError as error:
@@ -314,6 +349,7 @@ def get_airlines(
     country: str | None = Query(None),
     iata_code: str | None = Query(None),
     limit: int = Query(50, ge=1, le=1000),
+    offset: int = Query(0, ge=0),
     token: str = Depends(verify_token),
 ):
     query = """
@@ -322,7 +358,10 @@ def get_airlines(
         WHERE 1=1
     """
 
-    params = {"limit": limit}
+    params = {
+        "limit": limit,
+        "offset": offset,
+    }
 
     if country:
         query += " AND country_iso2 = UPPER(:country)"
@@ -332,10 +371,17 @@ def get_airlines(
         query += " AND iata_code = UPPER(:iata_code)"
         params["iata_code"] = iata_code
 
-    query += " ORDER BY airline_name LIMIT :limit"
+    query += """
+        ORDER BY airline_name
+        LIMIT :limit
+        OFFSET :offset
+    """
 
     with engine.connect() as conn:
-        rows = conn.execute(text(query), params).mappings().all()
+        rows = conn.execute(
+            text(query),
+            params,
+        ).mappings().all()
 
     return list(rows)
 
@@ -376,6 +422,7 @@ def get_airports(
     city_iata_code: str | None = Query(None),
     iata_code: str | None = Query(None),
     limit: int = Query(50, ge=1, le=1000),
+    offset: int = Query(0, ge=0),
     token: str = Depends(verify_token),
 ):
     query = """
@@ -384,7 +431,10 @@ def get_airports(
         WHERE 1=1
     """
 
-    params = {"limit": limit}
+    params = {
+        "limit": limit,
+        "offset": offset,
+    }
 
     if country:
         query += " AND country_iso2 = UPPER(:country)"
@@ -398,7 +448,7 @@ def get_airports(
         query += " AND iata_code = UPPER(:iata_code)"
         params["iata_code"] = iata_code
 
-    query += " ORDER BY airport_name LIMIT :limit"
+    query += " ORDER BY airport_name LIMIT :limit OFFSET :offset"
 
     with engine.connect() as conn:
         rows = conn.execute(text(query), params).mappings().all()
