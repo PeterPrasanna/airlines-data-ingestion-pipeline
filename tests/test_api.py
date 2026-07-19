@@ -3,6 +3,7 @@ import os
 # IMPORTANT :
 # Les variables doivent être définies AVANT l'import de src.api.main,
 # car DATABASE_URL et le moteur SQLAlchemy sont créés à l'import.
+os.environ["TESTING"] = "1"
 os.environ["DB_USER"] = "test"
 os.environ["DB_PASSWORD"] = "test"
 os.environ["DB_HOST"] = "localhost"

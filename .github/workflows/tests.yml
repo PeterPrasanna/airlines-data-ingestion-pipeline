@@ -24,6 +24,7 @@ jobs:
 
       - name: Lancer les tests
         env:
+          TESTING: "1"
           DB_USER: test
           DB_PASSWORD: test
           DB_HOST: localhost

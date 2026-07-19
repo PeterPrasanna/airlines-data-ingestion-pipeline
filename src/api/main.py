@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 from datetime import date
 from pathlib import Path
@@ -30,6 +31,9 @@ ml_objects: dict[str, object] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    if os.getenv("TESTING") == "1":
+        yield
+        return
     """
     Charge le modèle et les encodeurs une seule fois
     au démarrage de l'API.
