@@ -204,6 +204,20 @@ def predict_delay(
     flight: FlightPredictionInput,
     token: Annotated[str, Depends(verify_token)],
 ):
+    
+    # Vérification du format HHMM.
+    departure_hour = flight.scheduled_departure_time // 100
+    departure_minute = flight.scheduled_departure_time % 100
+
+    if departure_hour > 23 or departure_minute > 59:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=(
+                "scheduled_departure_time doit respecter le format HHMM "
+                "avec une heure entre 00 et 23 et des minutes entre 00 et 59"
+            ),
+        )
+        
     model = ml_objects.get("model")
     carrier_encoder = ml_objects.get("carrier_encoder")
     origin_encoder = ml_objects.get("origin_encoder")
@@ -226,19 +240,6 @@ def predict_delay(
     airline_code = flight.airline_code.strip().upper()
     origin = flight.origin.strip().upper()
     destination = flight.destination.strip().upper()
-
-    # Vérification du format HHMM.
-    departure_hour = flight.scheduled_departure_time // 100
-    departure_minute = flight.scheduled_departure_time % 100
-
-    if departure_hour > 23 or departure_minute > 59:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=(
-                "scheduled_departure_time doit respecter le format HHMM "
-                "avec une heure entre 00 et 23 et des minutes entre 00 et 59"
-            ),
-        )
 
     try:
         airline_encoded = int(
