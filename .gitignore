@@ -1,6 +1,25 @@
-data/
+# Python
 __pycache__/
+*.py[cod]
 *.pyc
 *.pkl
+.venv/
+
+# Environment variables
 .env
-venv/
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Local data
+data/
+*.csv
+
+# OS
+.DS_Store
+Thumbs.db
